@@ -1,0 +1,129 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewmodels="using:AvaloniaApp.ViewModels"
+        xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+        xmlns:local="clr-namespace:AvaloniaApp.Controls"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="AvaloniaApp.MainWindow"
+        x:DataType="viewmodels:MainWindowViewModel"
+        Title="AvaloniaApp"
+        Background="#FAFAFA">
+
+    <DockPanel Margin="20">
+        <!-- ComboBox выбора плейлиста -->
+        <ComboBox DockPanel.Dock="Top"
+          ItemsSource="{Binding Playlists}"
+          SelectedItem="{Binding SelectedPlaylist, Mode=TwoWay}"
+          Margin="0,0,0,15"
+          Width="550"
+          HorizontalAlignment="Left"
+          IsEnabled="{Binding IsPageLoaded}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Vertical" Margin="4">
+                        <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding Url}" FontSize="12" Foreground="Gray"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        <StackPanel>
+            <!-- Заголовок с аватаром -->
+            <StackPanel Orientation="Horizontal" Spacing="15" Margin="0,0,0,25">
+                <Border Width="100" Height="100" CornerRadius="8" ClipToBounds="True">
+                    <Grid>
+                        <!-- ProgressRing пока картинка не загружена -->
+                        <local:ProgressRing Width="40" Height="40" Thickness="4"
+                                            Foreground="DeepSkyBlue"
+                                            BackgroundStroke="LightGray"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            IsVisible="{Binding IsPageLoaded, Converter={StaticResource InverseBooleanConverter}}"/>
+
+                        <!-- Изображение плейлиста -->
+                        <Image asyncImageLoader:ImageLoader.Source="{Binding PlaylistAvatar}"
+                               Stretch="UniformToFill"
+                               IsVisible="{Binding IsPageLoaded}"/>
+                    </Grid>
+                </Border>
+
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="{Binding PlaylistName}"
+                               FontSize="24"
+                               FontWeight="Bold"/>
+                    <TextBlock Text="{Binding PlaylistDescription}"
+                               FontSize="14"
+                               Foreground="#666"
+                               Width="550"
+                               TextWrapping="Wrap"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Таблица с песнями -->
+            <Border BorderBrush="#DDD"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Background="White"
+                    Padding="10"
+                    BoxShadow="0 2 6 #00000022">
+
+                <StackPanel>
+                    <!-- Заголовки -->
+                    <Grid ColumnDefinitions="2*,2*,2*,1*" Margin="0,0,0,5">
+                        <TextBlock Text="Song" FontWeight="Bold" Foreground="#444"/>
+                        <TextBlock Text="Artist" FontWeight="Bold" Grid.Column="1" Foreground="#444"/>
+                        <TextBlock Text="Album" FontWeight="Bold" Grid.Column="2" Foreground="#444"/>
+                        <TextBlock Text="Duration" FontWeight="Bold" Grid.Column="3" HorizontalAlignment="Right" Foreground="#444"/>
+                    </Grid>
+
+                    <ScrollViewer Height="340">
+                        <ListBox ItemsSource="{Binding Songs}" BorderThickness="0">
+                            <ListBox.Styles>
+                                <!-- Базовый стиль -->
+                                <Style Selector="ListBoxItem">
+                                    <Setter Property="Padding" Value="6"/>
+                                    <Setter Property="CornerRadius" Value="6"/>
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="Opacity" Value="1"/>
+                                    <Setter Property="Transitions">
+                                        <Transitions>
+                                            <!-- Плавно анимируем изменение прозрачности -->
+                                            <DoubleTransition Property="Opacity" Duration="0:0:0.12"/>
+                                        </Transitions>
+                                    </Setter>
+                                </Style>
+
+                                <!-- При наведении -->
+                                <Style Selector="ListBoxItem:pointerover">
+                                    <Setter Property="Background" Value="#F2F5F9"/>
+                                    <!-- Можно чуть уменьшить opacity, чтобы было мягче -->
+                                    <Setter Property="Opacity" Value="0.98"/>
+                                </Style>
+
+                                <!-- При выборе -->
+                                <Style Selector="ListBoxItem:selected">
+                                    <Setter Property="Background" Value="#E1E8F7"/>
+                                    <Setter Property="Opacity" Value="1"/>
+                                </Style>
+                            </ListBox.Styles>
+
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid ColumnDefinitions="2*,2*,2*,1*" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding SongName}" Grid.Column="0"/>
+                                        <TextBlock Text="{Binding ArtistName}" Grid.Column="1"/>
+                                        <TextBlock Text="{Binding AlbumName}" Grid.Column="2"/>
+                                        <TextBlock Text="{Binding Duration}" Grid.Column="3" HorizontalAlignment="Right"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </ScrollViewer>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </DockPanel>
+</Window>

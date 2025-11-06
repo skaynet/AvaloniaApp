@@ -1,0 +1,14 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="AvaloniaApp.App"
+             xmlns:converters="clr-namespace:AvaloniaApp.Converters"
+             RequestedThemeVariant="Default">
+             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+
+    <Application.Styles>
+        <FluentTheme />
+    </Application.Styles>
+    <Application.Resources>
+    <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+  </Application.Resources>
+</Application>
